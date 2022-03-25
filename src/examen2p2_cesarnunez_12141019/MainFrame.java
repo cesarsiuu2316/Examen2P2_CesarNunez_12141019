@@ -5,19 +5,32 @@
  */
 package examen2p2_cesarnunez_12141019;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author cesar
  */
 public class MainFrame extends javax.swing.JFrame {
 
-    /**
-     * Creates new form MainFrame
-     */
+    private ArrayList<Planeta> planetas = new ArrayList();
+            
     public MainFrame() {
         initComponents();
         this.pack();
         this.setLocationRelativeTo(null);
+    }
+    
+    private void planetasPublicos(){
+        planetas.add(new Planeta(5000,13000,"Mercurio",400,300));
+        planetas.add(new Planeta(100000,15000,"Venus",640,260));
+        planetas.add(new Planeta(140000,17000,"Tierra",760,570));
+        planetas.add(new Planeta(90000,12000,"Marte",360,360));
+        planetas.add(new Planeta(400000,40000,"Jupiter",340,310));
+        planetas.add(new Planeta(300000,30000,"Saturno",560,450));
+        planetas.add(new Planeta(200000,20000,"Urano",670,690));
+        planetas.add(new Planeta(200000,20000,"Neptuno",840,900));
+
     }
 
     /**
