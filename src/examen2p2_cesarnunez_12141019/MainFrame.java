@@ -6,7 +6,6 @@
 package examen2p2_cesarnunez_12141019;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,6 +13,9 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -23,12 +25,17 @@ public class MainFrame extends javax.swing.JFrame {
 
     private ArrayList<Planeta> publicos = new ArrayList();
     private ArrayList<Cientifico> cientificos = new ArrayList();
+    private Planeta p1;
+    private Planeta p2;
             
     public MainFrame() {
         initComponents();
         this.pack();
         this.setLocationRelativeTo(null);
-        planetasPublicos();
+        cargarCientificos();
+        planetasPublicos();        
+        actualizarCbCientificos();
+        
     }
     
     private void planetasPublicos(){
@@ -50,9 +57,9 @@ public class MainFrame extends javax.swing.JFrame {
                 cientificos.add(c);
             }            
         } catch (IOException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            // System.out.println(ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex);
         }
     }
     
@@ -63,7 +70,34 @@ public class MainFrame extends javax.swing.JFrame {
                 os.writeObject(c);
             }
         } catch (IOException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex);
+        }
+    }
+    
+    private void actualizarCbCientificos(){
+        DefaultComboBoxModel cb = (DefaultComboBoxModel) cb_cientificos.getModel();
+        cb.removeAllElements();
+        for (Cientifico c : cientificos) {
+            cb.addElement(c);
+        }
+    }
+    
+    private void actualizarTreePlanetas(){
+        if(cb_publicos.isSelected()){
+            DefaultTreeModel m = (DefaultTreeModel) t_planetas.getModel();
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode("Planetas públicos");
+            for (Planeta p : publicos) {
+                root.add(new DefaultMutableTreeNode(p));
+            }
+            m.setRoot(root);
+        }else{
+            DefaultTreeModel m = (DefaultTreeModel) t_planetas.getModel();
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode("Planetas descubiertos");
+            Cientifico c = (Cientifico) cb_cientificos.getSelectedItem();
+            for (Planeta d : c.getDescubiertos()) {
+                root.add(new DefaultMutableTreeNode(d));
+            }   
+            m.setRoot(root);
         }
     }
     
@@ -83,7 +117,7 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         tf_nombreC = new javax.swing.JTextField();
         b_colisionar = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        aniadirCientifico = new javax.swing.JButton();
         l_bg = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -92,7 +126,7 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().add(pb_planetas, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 30, 820, 85));
 
         t_planetas.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Planetas");
         t_planetas.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane1.setViewportView(t_planetas);
 
@@ -100,6 +134,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         cb_publicos.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         cb_publicos.setText("Públicos");
+        cb_publicos.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cb_publicosItemStateChanged(evt);
+            }
+        });
         getContentPane().add(cb_publicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 616, -1, -1));
 
         l_planeta1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -115,6 +154,11 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(371, 381, 186, 36));
 
         cb_cientificos.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        cb_cientificos.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cb_cientificosItemStateChanged(evt);
+            }
+        });
         getContentPane().add(cb_cientificos, new org.netbeans.lib.awtextra.AbsoluteConstraints(371, 423, 244, 50));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -128,9 +172,14 @@ public class MainFrame extends javax.swing.JFrame {
         b_colisionar.setText("Colisionar");
         getContentPane().add(b_colisionar, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 240, 230, 110));
 
-        jButton2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jButton2.setText("Añadir Científico");
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 600, 250, 40));
+        aniadirCientifico.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        aniadirCientifico.setText("Añadir Científico");
+        aniadirCientifico.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                aniadirCientificoMouseClicked(evt);
+            }
+        });
+        getContentPane().add(aniadirCientifico, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 600, 250, 40));
 
         l_bg.setBackground(new java.awt.Color(204, 204, 204));
         l_bg.setOpaque(true);
@@ -138,6 +187,22 @@ public class MainFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void aniadirCientificoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aniadirCientificoMouseClicked
+        String nombre = tf_nombreC.getText();
+        Cientifico c = new Cientifico(nombre);
+        cientificos.add(c);
+        actualizarCbCientificos();
+        guardarCientificos();
+    }//GEN-LAST:event_aniadirCientificoMouseClicked
+
+    private void cb_cientificosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cb_cientificosItemStateChanged
+        
+    }//GEN-LAST:event_cb_cientificosItemStateChanged
+
+    private void cb_publicosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cb_publicosItemStateChanged
+        actualizarTreePlanetas();
+    }//GEN-LAST:event_cb_publicosItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -175,10 +240,10 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton aniadirCientifico;
     private javax.swing.JButton b_colisionar;
     private javax.swing.JComboBox<String> cb_cientificos;
     private javax.swing.JCheckBox cb_publicos;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JProgressBar jProgressBar1;

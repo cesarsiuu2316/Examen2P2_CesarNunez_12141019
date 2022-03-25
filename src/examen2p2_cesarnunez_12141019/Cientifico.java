@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class Cientifico implements Serializable{
     
-    private String nombre;
+    private String nombre = "";
     private ArrayList<Planeta> descubiertos = new ArrayList();
 
     public Cientifico(String nombre) {
@@ -33,5 +33,12 @@ public class Cientifico implements Serializable{
     public void setDescubiertos(ArrayList<Planeta> descubiertos) {
         this.descubiertos = descubiertos;
     }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
+    
+    
     
 }
