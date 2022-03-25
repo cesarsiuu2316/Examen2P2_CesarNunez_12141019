@@ -11,9 +11,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -27,6 +26,7 @@ public class MainFrame extends javax.swing.JFrame {
     private ArrayList<Cientifico> cientificos = new ArrayList();
     private Planeta p1;
     private Planeta p2;
+    private Planeta planetaSeleccionado;
             
     public MainFrame() {
         initComponents();
@@ -105,6 +105,9 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        ppm_menu = new javax.swing.JPopupMenu();
+        mi_p1 = new javax.swing.JMenuItem();
+        mi_p2 = new javax.swing.JMenuItem();
         jProgressBar1 = new javax.swing.JProgressBar();
         pb_planetas = new javax.swing.JProgressBar();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -120,6 +123,24 @@ public class MainFrame extends javax.swing.JFrame {
         aniadirCientifico = new javax.swing.JButton();
         l_bg = new javax.swing.JLabel();
 
+        mi_p1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        mi_p1.setText("Planeta 1");
+        mi_p1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mi_p1ActionPerformed(evt);
+            }
+        });
+        ppm_menu.add(mi_p1);
+
+        mi_p2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        mi_p2.setText("Planeta 2");
+        mi_p2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mi_p2ActionPerformed(evt);
+            }
+        });
+        ppm_menu.add(mi_p2);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         getContentPane().add(jProgressBar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 133, 820, 85));
@@ -128,6 +149,11 @@ public class MainFrame extends javax.swing.JFrame {
         t_planetas.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Planetas");
         t_planetas.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        t_planetas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                t_planetasMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(t_planetas);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 236, 316, 370));
@@ -170,6 +196,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         b_colisionar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         b_colisionar.setText("Colisionar");
+        b_colisionar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                b_colisionarMouseClicked(evt);
+            }
+        });
         getContentPane().add(b_colisionar, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 240, 230, 110));
 
         aniadirCientifico.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -194,16 +225,59 @@ public class MainFrame extends javax.swing.JFrame {
         cientificos.add(c);
         actualizarCbCientificos();
         guardarCientificos();
+        JOptionPane.showMessageDialog(null, "El científico se añadió con éxito!");
     }//GEN-LAST:event_aniadirCientificoMouseClicked
 
     private void cb_cientificosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cb_cientificosItemStateChanged
-        
+        actualizarTreePlanetas();
     }//GEN-LAST:event_cb_cientificosItemStateChanged
 
     private void cb_publicosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cb_publicosItemStateChanged
         actualizarTreePlanetas();
     }//GEN-LAST:event_cb_publicosItemStateChanged
 
+    private void mi_p2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mi_p2ActionPerformed
+        p2 = (Planeta) planetaSeleccionado;
+        l_planeta2.setText(p2.toString());
+    }//GEN-LAST:event_mi_p2ActionPerformed
+
+    private void mi_p1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mi_p1ActionPerformed
+        p1 = (Planeta) planetaSeleccionado;
+        l_planeta1.setText(p1.toString());
+    }//GEN-LAST:event_mi_p1ActionPerformed
+
+    private void t_planetasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_t_planetasMouseClicked
+        if(evt.isMetaDown()){
+            try{
+                int row = t_planetas.getClosestRowForLocation(evt.getX(), evt.getY());
+                t_planetas.setSelectionRow(row);
+                Object o = t_planetas.getSelectionPath().getLastPathComponent();
+                DefaultMutableTreeNode nodoSeleccionado = (DefaultMutableTreeNode) o;
+                planetaSeleccionado = (Planeta) nodoSeleccionado.getUserObject();                
+            }catch(Exception e){
+
+            }               
+            ppm_menu.show(evt.getComponent(), evt.getX(), evt.getY());
+        }        
+    }//GEN-LAST:event_t_planetasMouseClicked
+
+    private void b_colisionarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_b_colisionarMouseClicked
+        
+    }//GEN-LAST:event_b_colisionarMouseClicked
+
+    private double calcularDistancia(){
+        double d;
+        double x1 = p1.getCoordenadaX();
+        double x2 = p2.getCoordenadaX();        
+        double y1 = p1.getCoordenadaY();
+        double y2 = p2.getCoordenadaY();
+        
+        double expX = Math.pow(x2-x1, 2);
+        double expY = Math.pow(y2-y1, 2);
+        d = Math.sqrt(expX + expY);
+        return d;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -251,7 +325,10 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel l_bg;
     private javax.swing.JLabel l_planeta1;
     private javax.swing.JLabel l_planeta2;
+    private javax.swing.JMenuItem mi_p1;
+    private javax.swing.JMenuItem mi_p2;
     private javax.swing.JProgressBar pb_planetas;
+    private javax.swing.JPopupMenu ppm_menu;
     private javax.swing.JTree t_planetas;
     private javax.swing.JTextField tf_nombreC;
     // End of variables declaration//GEN-END:variables
