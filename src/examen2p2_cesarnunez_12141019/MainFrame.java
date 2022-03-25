@@ -20,13 +20,16 @@ import javax.swing.tree.DefaultTreeModel;
  *
  * @author cesar
  */
-public class MainFrame extends javax.swing.JFrame {
+public class MainFrame extends javax.swing.JFrame implements Runnable{
 
     private ArrayList<Planeta> publicos = new ArrayList();
     private ArrayList<Cientifico> cientificos = new ArrayList();
     private Planeta p1;
     private Planeta p2;
     private Planeta planetaSeleccionado;
+    private Thread thread = new Thread(this);
+    private boolean pausar = false;
+    private boolean vive = true;
             
     public MainFrame() {
         initComponents();
@@ -34,8 +37,26 @@ public class MainFrame extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         cargarCientificos();
         planetasPublicos();        
-        actualizarCbCientificos();
-        
+        actualizarCbCientificos();  
+        actualizarTreePlanetas();
+    }
+    
+    @Override
+        public void run() {
+        try{            
+            while(vive){
+                while(pausar == false){
+                    if(pb_planetas.getValue() < calcularDistancia()){
+                        pb_planetas.setValue(pb_planetas.getValue() + 1);
+                    }else{
+                        pausar = true;                        
+                    } 
+                    Thread.sleep(5);
+                }
+            }            
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }
     
     private void planetasPublicos(){
@@ -262,10 +283,20 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_t_planetasMouseClicked
 
     private void b_colisionarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_b_colisionarMouseClicked
-        
+        try{
+            thread = new Thread(this);
+            
+            pb_planetas.setMaximum(calcularDistancia());
+            pb_planetas.setValue(0);
+            pausar = false;
+            
+            thread.start();
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Seleccione los planetas que colisionarán!");
+        }
     }//GEN-LAST:event_b_colisionarMouseClicked
 
-    private double calcularDistancia(){
+    private int calcularDistancia(){
         double d;
         double x1 = p1.getCoordenadaX();
         double x2 = p2.getCoordenadaX();        
@@ -275,7 +306,8 @@ public class MainFrame extends javax.swing.JFrame {
         double expX = Math.pow(x2-x1, 2);
         double expY = Math.pow(y2-y1, 2);
         d = Math.sqrt(expX + expY);
-        return d;
+        int y = (int) Math.round(d);
+        return y;
     }
     
     /**

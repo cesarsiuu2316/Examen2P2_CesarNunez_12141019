@@ -14,9 +14,9 @@ import java.io.Serializable;
 public class Planeta implements Serializable{
     
     private String nombre;
-    private int tamanio, peso, coordenadaX, coordenadaY;
+    private double tamanio, peso, coordenadaX, coordenadaY;
 
-    public Planeta(int tamanio, int peso, String nombre, int coordenadaX, int coordenadaY) {
+    public Planeta(double tamanio, double peso, String nombre, double coordenadaX, double coordenadaY) {
         this.nombre = nombre;
         this.tamanio = tamanio;
         this.peso = peso;
@@ -35,37 +35,39 @@ public class Planeta implements Serializable{
         this.nombre = nombre;
     }
 
-    public int getTamanio() {
+    public double getTamanio() {
         return tamanio;
     }
 
-    public void setTamanio(int tamanio) {
+    public void setTamanio(double tamanio) {
         this.tamanio = tamanio;
     }
 
-    public int getPeso() {
+    public double getPeso() {
         return peso;
     }
 
-    public void setPeso(int peso) {
+    public void setPeso(double peso) {
         this.peso = peso;
     }
 
-    public int getCoordenadaX() {
+    public double getCoordenadaX() {
         return coordenadaX;
     }
 
-    public void setCoordenadaX(int coordenadaX) {
+    public void setCoordenadaX(double coordenadaX) {
         this.coordenadaX = coordenadaX;
     }
 
-    public int getCoordenadaY() {
+    public double getCoordenadaY() {
         return coordenadaY;
     }
 
-    public void setCoordenadaY(int coordenadaY) {
+    public void setCoordenadaY(double coordenadaY) {
         this.coordenadaY = coordenadaY;
     }
+
+    
 
     @Override
     public String toString() {
