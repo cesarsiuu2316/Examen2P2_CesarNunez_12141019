@@ -16,7 +16,7 @@ public class Planeta implements Serializable{
     private String nombre;
     private int tamanio, peso, coordenadaX, coordenadaY;
 
-    public Planeta(String nombre, int tamanio, int peso, int coordenadaX, int coordenadaY) {
+    public Planeta(int tamanio, int peso, String nombre, int coordenadaX, int coordenadaY) {
         this.nombre = nombre;
         this.tamanio = tamanio;
         this.peso = peso;
@@ -71,4 +71,6 @@ public class Planeta implements Serializable{
     public String toString() {
         return nombre;
     }
+    
+    
 }
