@@ -67,8 +67,6 @@ public class Planeta implements Serializable{
         this.coordenadaY = coordenadaY;
     }
 
-    
-
     @Override
     public String toString() {
         return nombre;

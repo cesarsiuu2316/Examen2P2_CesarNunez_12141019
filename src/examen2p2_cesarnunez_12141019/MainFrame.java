@@ -40,7 +40,6 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
         cargarCientificos();
         planetasPublicos();        
         actualizarCbCientificos();  
-        actualizarTreePlanetas();
     }
     
     @Override
@@ -64,14 +63,15 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
         
     private void crearPlaneta(){
         double tamanio, peso, cx, cy;
-        peso = p1.getPeso();
-        tamanio = p1.getTamanio();
-        cx = p1.getCoordenadaX();
-        cy = p1.getCoordenadaY();        
+        peso = (p1.getPeso() + p2.getPeso()) / 2;
+        tamanio = (p1.getTamanio() + p2.getTamanio()) / 2;
+        cx = (p1.getCoordenadaX() + p2.getCoordenadaX()) / 2;
+        cy = (p1.getCoordenadaY() + p2.getCoordenadaY()) / 2;     
         DefaultComboBoxModel m = (DefaultComboBoxModel) cb_cientificos.getModel();
         
         if(p1 instanceof Terrestre){
             int x = 1 + rd.nextInt(4);
+            System.out.println(x);
             if(x == 1){
                 String nombre = JOptionPane.showInputDialog("Ingrese el nombre del nuevo planeta: ");
                 ((Cientifico) m.getSelectedItem()).getDescubiertos().add(new Terrestre(tamanio, peso, nombre, cx, cy));
@@ -80,6 +80,7 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
             }
         }else{
             int x = 1 + rd.nextInt(5);
+            System.out.println(x);
             if(x == 1){
                 String nombre = JOptionPane.showInputDialog("Ingrese el nombre del nuevo planeta: ");
                 ((Cientifico) m.getSelectedItem()).getDescubiertos().add(new Gaseoso(tamanio, peso, nombre, cx, cy));
@@ -87,6 +88,10 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
                 guardarCientificos();
             }
         }
+        
+        l_planeta1.setText("");
+        l_planeta2.setText("");
+                
     }
     
     private void planetasPublicos(){
@@ -103,7 +108,7 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
     private void cargarCientificos(){
         try {
             ObjectInputStream os = new ObjectInputStream(new FileInputStream("./cientificos.sci"));
-            Cientifico c = new Cientifico();
+            Cientifico c;
             while((c = (Cientifico) os.readObject()) != null){
                 cientificos.add(c);
             }            
@@ -134,22 +139,26 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
     }
     
     private void actualizarTreePlanetas(){
-        if(cb_publicos.isSelected()){
-            DefaultTreeModel m = (DefaultTreeModel) t_planetas.getModel();
-            DefaultMutableTreeNode root = new DefaultMutableTreeNode("Planetas públicos");
-            for (Planeta p : publicos) {
-                root.add(new DefaultMutableTreeNode(p));
+        try{
+            if(cb_publicos.isSelected()){
+                DefaultTreeModel m = (DefaultTreeModel) t_planetas.getModel();
+                DefaultMutableTreeNode root = new DefaultMutableTreeNode("Planetas públicos");
+                for (Planeta p : publicos) {
+                    root.add(new DefaultMutableTreeNode(p));
+                }
+                m.setRoot(root);
+            }else{
+                DefaultTreeModel m = (DefaultTreeModel) t_planetas.getModel();
+                DefaultMutableTreeNode root = new DefaultMutableTreeNode("Planetas descubiertos");
+                Cientifico c = (Cientifico) cb_cientificos.getSelectedItem();
+                for (Planeta d : c.getDescubiertos()) {
+                    root.add(new DefaultMutableTreeNode(d));
+                }   
+                m.setRoot(root);
             }
-            m.setRoot(root);
-        }else{
-            DefaultTreeModel m = (DefaultTreeModel) t_planetas.getModel();
-            DefaultMutableTreeNode root = new DefaultMutableTreeNode("Planetas descubiertos");
-            Cientifico c = (Cientifico) cb_cientificos.getSelectedItem();
-            for (Planeta d : c.getDescubiertos()) {
-                root.add(new DefaultMutableTreeNode(d));
-            }   
-            m.setRoot(root);
-        }
+        }catch(Exception e){
+            e.printStackTrace();
+        }        
     }
     
     @SuppressWarnings("unchecked")
@@ -277,6 +286,7 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
         actualizarCbCientificos();
         guardarCientificos();
         JOptionPane.showMessageDialog(null, "El científico se añadió con éxito!");
+        tf_nombreC.setText("");
     }//GEN-LAST:event_aniadirCientificoMouseClicked
 
     private void cb_cientificosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cb_cientificosItemStateChanged
@@ -314,13 +324,15 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
 
     private void b_colisionarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_b_colisionarMouseClicked
         try{
-            thread = new Thread(this);
-            
-            pb_planetas.setMaximum(calcularDistancia());
-            pb_planetas.setValue(0);
-            pausar = false;
-            
-            thread.start();
+            if(l_planeta1.getText().equals("") || l_planeta2.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "Aún no selecciona los planetas que colisionarán!");
+            }else{
+                thread = new Thread(this);
+                pb_planetas.setMaximum(calcularDistancia());
+                pb_planetas.setValue(0);
+                pausar = false;
+                thread.start();
+            }            
         }catch(Exception e){
             JOptionPane.showMessageDialog(null, "Seleccione los planetas que colisionarán!");
         }
