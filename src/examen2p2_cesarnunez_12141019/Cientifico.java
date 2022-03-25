@@ -18,6 +18,9 @@ public class Cientifico implements Serializable{
         this.nombre = nombre;
     }
 
+    public Cientifico() {
+    }
+
     public String getNombre() {
         return nombre;
     }

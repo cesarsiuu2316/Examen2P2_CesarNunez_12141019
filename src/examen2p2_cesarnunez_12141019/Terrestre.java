@@ -11,19 +11,20 @@ import java.io.Serializable;
  *
  * @author cesar
  */
-public class Terrestre extends Planeta implements Serializable, Probabilidad {
+public class Terrestre extends Planeta implements Serializable {
 
-    public Terrestre(int tamanio, int peso, String nombre, int coordenadaX, int coordenadaY) {
+    public Terrestre(double tamanio, double peso, String nombre, double coordenadaX, double coordenadaY) {
         super(tamanio, peso, nombre, coordenadaX, coordenadaY);
     }
-    
+
     public Terrestre() {
     }
 
     @Override
-    public int probabilidad() {
-        
-        return 0;
+    public String toString() {
+        return super.getNombre();
     }
+    
+    
 
 }

@@ -11,9 +11,9 @@ import java.io.Serializable;
  *
  * @author cesar
  */
-public class Gaseoso extends Planeta implements Serializable, Probabilidad{
+public class Gaseoso extends Planeta implements Serializable{
 
-    public Gaseoso(int tamanio, int peso, String nombre, int coordenadaX, int coordenadaY) {
+    public Gaseoso(double tamanio, double peso, String nombre, double coordenadaX, double coordenadaY) {
         super(tamanio, peso, nombre, coordenadaX, coordenadaY);
     }
 
@@ -21,7 +21,10 @@ public class Gaseoso extends Planeta implements Serializable, Probabilidad{
     }
 
     @Override
-    public int probabilidad() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public String toString() {
+        return super.getNombre();
     }
+    
+    
+
 }

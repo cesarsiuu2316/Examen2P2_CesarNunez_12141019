@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Random;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -30,6 +31,7 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
     private Thread thread = new Thread(this);
     private boolean pausar = false;
     private boolean vive = true;
+    private Random rd = new Random();
             
     public MainFrame() {
         initComponents();
@@ -49,13 +51,41 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
                     if(pb_planetas.getValue() < calcularDistancia()){
                         pb_planetas.setValue(pb_planetas.getValue() + 1);
                     }else{
-                        pausar = true;                        
+                        pausar = true;  
+                        crearPlaneta();
                     } 
                     Thread.sleep(5);
                 }
             }            
         }catch(Exception e){
             System.out.println(e);
+        }
+    }
+        
+    private void crearPlaneta(){
+        double tamanio, peso, cx, cy;
+        peso = p1.getPeso();
+        tamanio = p1.getTamanio();
+        cx = p1.getCoordenadaX();
+        cy = p1.getCoordenadaY();        
+        DefaultComboBoxModel m = (DefaultComboBoxModel) cb_cientificos.getModel();
+        
+        if(p1 instanceof Terrestre){
+            int x = 1 + rd.nextInt(4);
+            if(x == 1){
+                String nombre = JOptionPane.showInputDialog("Ingrese el nombre del nuevo planeta: ");
+                ((Cientifico) m.getSelectedItem()).getDescubiertos().add(new Terrestre(tamanio, peso, nombre, cx, cy));
+                actualizarTreePlanetas();
+                guardarCientificos();
+            }
+        }else{
+            int x = 1 + rd.nextInt(5);
+            if(x == 1){
+                String nombre = JOptionPane.showInputDialog("Ingrese el nombre del nuevo planeta: ");
+                ((Cientifico) m.getSelectedItem()).getDescubiertos().add(new Gaseoso(tamanio, peso, nombre, cx, cy));
+                actualizarTreePlanetas();
+                guardarCientificos();
+            }
         }
     }
     
@@ -73,7 +103,7 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
     private void cargarCientificos(){
         try {
             ObjectInputStream os = new ObjectInputStream(new FileInputStream("./cientificos.sci"));
-            Cientifico c;
+            Cientifico c = new Cientifico();
             while((c = (Cientifico) os.readObject()) != null){
                 cientificos.add(c);
             }            
