@@ -52,9 +52,9 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
                     if(pb_planetas.getValue() < calcularDistancia()){
                         pb_planetas.setValue(pb_planetas.getValue() + 1);
                     }else{
-                        pausar = true; 
-                        calcularValores();
+                        pausar = true;                         
                         crearPlaneta();
+                        calcularValores();
                     } 
                     t += 0.005;
                     Thread.sleep(5);
@@ -72,11 +72,12 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
         Double velocidad = dist / t;
         v += "Distancia: " + dist + "\nVelocidad: " + velocidad + "\n";
         Double masa = p1.getPeso() + p2.getPeso();
-        Double energiaColision = (1/2) * masa * (Math.pow(velocidad, 2));
+        Double energiaColision = (1.0/2.0) * masa * (Math.pow(velocidad, 2));
         v += "Energía de colisión: " + energiaColision + "\n";
         Double r = rd.nextDouble();
-        Double energiaMaxima = energiaColision + (r * ((2 * energiaColision) - energiaColision));
-        v += "Energía máxima: " + energiaMaxima + "\n";        
+        Double energiaMaxima = energiaColision + (r * ((2.0 * energiaColision) - energiaColision));
+        v += "Energía máxima: " + energiaMaxima + "\n\n";  
+        JOptionPane.showMessageDialog(null, v);
     }
         
     private void crearPlaneta(){
@@ -89,17 +90,15 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
         
         if(p1 instanceof Terrestre){
             int x = 1 + rd.nextInt(100);
-            
-            if(x == 1){
+            if(x <= 25){
                 String nombre = JOptionPane.showInputDialog("Ingrese el nombre del nuevo planeta: ");
                 ((Cientifico) m.getSelectedItem()).getDescubiertos().add(new Terrestre(tamanio, peso, nombre, cx, cy));
                 actualizarTreePlanetas();
                 guardarCientificos();
             }
         }else{
-            int x = 1 + rd.nextInt(5);
-            System.out.println(x);
-            if(x == 1){
+            int x = 1 + rd.nextInt(100);
+            if(x <= 20){
                 String nombre = JOptionPane.showInputDialog("Ingrese el nombre del nuevo planeta: ");
                 ((Cientifico) m.getSelectedItem()).getDescubiertos().add(new Gaseoso(tamanio, peso, nombre, cx, cy));
                 actualizarTreePlanetas();
