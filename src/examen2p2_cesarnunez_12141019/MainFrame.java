@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -32,6 +33,7 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
     private boolean pausar = false;
     private boolean vive = true;
     private Random rd = new Random();
+    private Double t = 0.0;
             
     public MainFrame() {
         initComponents();
@@ -39,26 +41,42 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
         this.setLocationRelativeTo(null);
         cargarCientificos();
         planetasPublicos();        
-        actualizarCbCientificos();  
+        actualizarCbCientificos();          
     }
     
     @Override
-        public void run() {
+    public void run() {
         try{            
             while(vive){
                 while(pausar == false){
                     if(pb_planetas.getValue() < calcularDistancia()){
                         pb_planetas.setValue(pb_planetas.getValue() + 1);
                     }else{
-                        pausar = true;  
+                        pausar = true; 
+                        calcularValores();
                         crearPlaneta();
                     } 
+                    t += 0.005;
                     Thread.sleep(5);
                 }
             }            
         }catch(Exception e){
             System.out.println(e);
         }
+    }
+    
+    private void calcularValores(){
+        String v = "";
+        double dist = calcularDistancia();
+        v += "Tiempo: " + t + " s\n";
+        Double velocidad = dist / t;
+        v += "Distancia: " + dist + "\nVelocidad: " + velocidad + "\n";
+        Double masa = p1.getPeso() + p2.getPeso();
+        Double energiaColision = (1/2) * masa * (Math.pow(velocidad, 2));
+        v += "Energía de colisión: " + energiaColision + "\n";
+        Double r = rd.nextDouble();
+        Double energiaMaxima = energiaColision + (r * ((2 * energiaColision) - energiaColision));
+        v += "Energía máxima: " + energiaMaxima + "\n";        
     }
         
     private void crearPlaneta(){
@@ -70,8 +88,8 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
         DefaultComboBoxModel m = (DefaultComboBoxModel) cb_cientificos.getModel();
         
         if(p1 instanceof Terrestre){
-            int x = 1 + rd.nextInt(4);
-            System.out.println(x);
+            int x = 1 + rd.nextInt(100);
+            
             if(x == 1){
                 String nombre = JOptionPane.showInputDialog("Ingrese el nombre del nuevo planeta: ");
                 ((Cientifico) m.getSelectedItem()).getDescubiertos().add(new Terrestre(tamanio, peso, nombre, cx, cy));
@@ -157,7 +175,7 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
                 m.setRoot(root);
             }
         }catch(Exception e){
-            e.printStackTrace();
+            
         }        
     }
     
@@ -168,7 +186,7 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
         ppm_menu = new javax.swing.JPopupMenu();
         mi_p1 = new javax.swing.JMenuItem();
         mi_p2 = new javax.swing.JMenuItem();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        pb_bono = new javax.swing.JProgressBar();
         pb_planetas = new javax.swing.JProgressBar();
         jScrollPane1 = new javax.swing.JScrollPane();
         t_planetas = new javax.swing.JTree();
@@ -203,7 +221,7 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        getContentPane().add(jProgressBar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 133, 820, 85));
+        getContentPane().add(pb_bono, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 133, 820, 85));
         getContentPane().add(pb_planetas, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 30, 820, 85));
 
         t_planetas.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -394,13 +412,13 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
     private javax.swing.JCheckBox cb_publicos;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel l_bg;
     private javax.swing.JLabel l_planeta1;
     private javax.swing.JLabel l_planeta2;
     private javax.swing.JMenuItem mi_p1;
     private javax.swing.JMenuItem mi_p2;
+    private javax.swing.JProgressBar pb_bono;
     private javax.swing.JProgressBar pb_planetas;
     private javax.swing.JPopupMenu ppm_menu;
     private javax.swing.JTree t_planetas;
